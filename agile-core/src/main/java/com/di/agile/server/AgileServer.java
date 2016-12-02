@@ -17,7 +17,7 @@ public class AgileServer {
 		RequestHandler.init(actionPath);
 		new Thread(new Server(port)).start();
 		long end = new Date().getTime();
-		System.out.println("server start " + (end - start) + " s.");
+		System.out.println("server start " + (end - start) + " ms.");
 	}
 
 	public static void main(String[] args) {

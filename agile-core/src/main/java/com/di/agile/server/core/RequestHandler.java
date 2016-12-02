@@ -9,21 +9,27 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.di.agile.annotation.Autowired;
+import com.di.agile.annotation.Component;
 import com.di.agile.annotation.Controller;
+import com.di.agile.annotation.Repository;
 import com.di.agile.annotation.RequestMapping;
 import com.di.agile.annotation.RequestMethod;
 import com.di.agile.annotation.RequestParam;
+import com.di.agile.annotation.Resource;
 import com.di.agile.annotation.ResponseBody;
+import com.di.agile.annotation.Service;
 import com.di.agile.core.server.bean.HttpRequest;
 import com.di.agile.core.server.bean.HttpResponse;
 import com.di.agile.core.server.bean.HttpSession;
 import com.di.agile.core.server.bean.Model;
+import com.di.agile.server.util.ComponentUtil;
 import com.di.agile.server.util.FieldUtil;
 import com.di.agile.server.util.LogUtil;
 import com.di.toolkit.ClassesUtil;
@@ -35,6 +41,8 @@ import com.di.toolkit.ClassesUtil;
  */
 public class RequestHandler {
 	static List<RequestMapper> mappers = new ArrayList<>();
+	@SuppressWarnings("rawtypes")
+	public static HashMap<String, Class> components = new HashMap<>();
 	static ConcurrentMap<String, RequestMapper> maps = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("rawtypes")
@@ -42,7 +50,25 @@ public class RequestHandler {
 		synchronized (maps) {
 			ArrayList<Class> list = ClassesUtil.getAllClass(packagePath);
 			for (Class<?> c : list) {
-				if (c.isAnnotationPresent(Controller.class)) {
+				if (c.isAnnotationPresent(Service.class)) {
+					String n = c.getAnnotation(Service.class).value();
+					if (n.equals("")) {
+						n = firstCharLower(c.getSimpleName());
+					}
+					components.put(n, c);
+				} else if (c.isAnnotationPresent(Component.class)) {
+					String n = c.getAnnotation(Component.class).value();
+					if (n.equals("")) {
+						n = firstCharLower(c.getSimpleName());
+					}
+					components.put(n, c);
+				} else if (c.isAnnotationPresent(Repository.class)) {
+					String n = c.getAnnotation(Repository.class).value();
+					if (n.equals("")) {
+						n = firstCharLower(c.getSimpleName());
+					}
+					components.put(n, c);
+				} else if (c.isAnnotationPresent(Controller.class)) {
 					Method[] methods = c.getDeclaredMethods();
 					for (Method m : methods) {
 						m.setAccessible(true);
@@ -106,7 +132,15 @@ public class RequestHandler {
 			Object o = handlerClass.newInstance();
 			for (Field f : fs) {
 				f.setAccessible(true);
-				if (!f.isAnnotationPresent(Autowired.class)) {
+				if (f.isAnnotationPresent(Autowired.class)) {
+					f.set(o, ComponentUtil.set(f.getName()));
+				} else if (f.isAnnotationPresent(Resource.class)) {
+					String n = f.getAnnotation(Resource.class).name();
+					if (n.equals("")) {
+						n = f.getName();
+					}
+					f.set(o, ComponentUtil.set(n));
+				} else {
 					String n = f.getName();
 					String val = params.get(f.getName());
 					if (f.isAnnotationPresent(RequestParam.class)) {
@@ -145,5 +179,9 @@ public class RequestHandler {
 		} else {
 			resp.setBody(FreeMarkerUtil.render((String) result, m));
 		}
+	}
+
+	private static String firstCharLower(String s) {
+		return s.substring(0, 1).toLowerCase() + s.substring(1);
 	}
 }

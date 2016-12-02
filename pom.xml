@@ -7,5 +7,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>agile-core</module>
+		<module>agile-sample</module>
 	</modules>
 </project>
