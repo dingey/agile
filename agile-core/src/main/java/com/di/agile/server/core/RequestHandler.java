@@ -141,6 +141,8 @@ public class RequestHandler {
 					f.set(o, ComponentUtil.set(n));
 				} else {
 					String n = f.getName();
+					if (params == null)
+						continue;
 					String val = params.get(f.getName());
 					if (f.isAnnotationPresent(RequestParam.class)) {
 						n = f.getAnnotation(RequestParam.class).name();
