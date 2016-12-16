@@ -1,6 +1,8 @@
 package com.di.agile.core.server.bean;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,9 +26,12 @@ public class HttpRequest {
 	private String sessionId;
 
 	public HttpRequest(String requestString) {
-		String[] ss = requestString.split(System.getProperty("line.separator", "\n"));
+		String[] ss = requestString.split("\r\n");
 		setMethod(ss[0].split(" ")[0]);
-		for (String s : ss) {
+		String split = "";
+		List<Integer> is = new ArrayList<>();
+		for (int i = 0; i < ss.length; i++) {
+			String s = ss[i];
 			if (s.contains("Accept")) {
 				setAccept(spit(s));
 			} else if (s.indexOf("Accept-Encoding") != -1) {
@@ -44,8 +49,14 @@ public class HttpRequest {
 			}
 			if (s.indexOf("sessionId") != -1) {
 				String s0 = s.substring(s.indexOf("sessionId="));
-				s0 = s0.substring(s0.indexOf("=")+1, s0.indexOf(";") > 0 ? s0.indexOf(";") : s0.length());
+				s0 = s0.substring(s0.indexOf("=") + 1, s0.indexOf(";") > 0 ? s0.indexOf(";") : s0.length());
 				setSessionId(s0);
+			}
+			if (s.indexOf("Content-Type") != -1 && s.indexOf("multipart/form-data") != -1) {
+				split = s.substring(s.indexOf("boundary=") + 1).trim();
+			}
+			if (s.startsWith(split)) {
+				break;
 			}
 		}
 		setPath(ss[0].split(" ")[1]);

@@ -9,6 +9,6 @@ import com.di.agile.server.AgileServer;
  */
 public class AgileApp {
 	public static void main(String[] args) {
-		AgileServer.start(8080, "template", "com.agile");
+		AgileServer.start(8090, "template", "com.agile");
 	}
 }

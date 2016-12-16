@@ -118,7 +118,7 @@ public class Server implements Runnable {
 
 	private String receive(SocketChannel socketChannel) throws Exception {
 		// 声明一个1024大小的缓冲区
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		ByteBuffer buffer = ByteBuffer.allocate(4024);
 		byte[] bytes = null;
 		int size = 0;
 		// 定义一个字节数组输出流
