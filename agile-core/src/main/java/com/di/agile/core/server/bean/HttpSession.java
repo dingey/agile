@@ -4,8 +4,6 @@ import com.di.agile.server.util.SessionUtil;
 
 /**
  * @author di
- * @date 2016年12月1日 下午9:45:55
- * @since 1.0.0
  */
 public class HttpSession {
 	private String sessionId;

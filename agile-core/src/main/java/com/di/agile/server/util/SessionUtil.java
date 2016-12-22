@@ -9,8 +9,6 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author di
- * @date 2016年12月1日 下午1:37:41
- * @since 1.0.0
  */
 public class SessionUtil {
 	static final char[] chars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',

@@ -8,8 +8,6 @@ import com.di.agile.server.util.Str;
 
 /**
  * @author di
- * @date 2016年12月1日 上午9:27:13
- * @since 1.0.0
  */
 public class HttpResponse {
 	private String connection;

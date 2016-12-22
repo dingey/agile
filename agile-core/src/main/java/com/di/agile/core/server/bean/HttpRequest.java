@@ -50,11 +50,32 @@ public class HttpRequest {
 			if (s.indexOf("Content-Type") != -1 && s.indexOf("multipart/form-data") != -1) {
 				split = s.substring(s.indexOf("boundary=") + 1).trim();
 			}
-			if (s.startsWith(split)&&!split.isEmpty()) {
+			if (s.startsWith(split) && !split.isEmpty()) {
 				break;
 			}
 		}
 		setPath(ss[0].split(" ")[1]);
+		reqParams = new HashMap<>();
+		if (requestString.split("\r\n\r\n").length < 2) {
+			return;
+		} else if (split == null || split.isEmpty()) {
+			String reqStr = requestString.split("\r\n\r\n")[1];
+			for (String s : reqStr.split("&")) {
+				reqParams.put(s.split("=")[0], s.split("=")[1]);
+			}
+		} else if (!split.isEmpty()) {
+			String reqbody = requestString.substring(requestString.indexOf("\r\n\r\n"),
+					requestString.lastIndexOf("\r\n--" + toString() + "--\r\n"));
+			for (String s : reqbody.split("\r\n--" + reqbody + "\r\n")) {
+				if (s.indexOf("Content-Type") == -1) {
+					String k = s.split("\"\r\n\r\n")[0];
+					reqParams.put(k.substring(k.indexOf("name=\""), k.length() - 1), s.split("\"\r\n\r\n")[1]);
+				} else {
+					String k = s.split("\r\n\r\n")[0];
+					reqParams.put(k.substring(k.indexOf("name=\""), k.indexOf("\"")), s.split("\r\n\r\n")[1]);
+				}
+			}
+		}
 	}
 
 	private String spit(String str) {

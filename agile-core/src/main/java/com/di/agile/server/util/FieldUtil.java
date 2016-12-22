@@ -7,8 +7,6 @@ import java.util.Date;
 
 /**
  * @author di
- * @date 2016年12月1日 下午4:18:57
- * @since 1.0.0
  */
 public class FieldUtil {
 	public static Object getVal(Field p, String obj) {

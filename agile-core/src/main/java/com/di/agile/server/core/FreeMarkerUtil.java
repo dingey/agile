@@ -13,8 +13,6 @@ import freemarker.template.TemplateException;
 
 /**
  * @author di
- * @date 2016年12月1日 下午4:30:11
- * @since 1.0.0
  */
 public class FreeMarkerUtil {
 	@SuppressWarnings("deprecation")

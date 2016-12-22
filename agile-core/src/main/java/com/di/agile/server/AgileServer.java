@@ -7,8 +7,6 @@ import com.di.agile.server.core.Server;
 
 /**
  * @author di
- * @date 2016年11月30日 下午2:54:57
- * @since 1.0.0
  */
 public class AgileServer {
 	public static void start(int port, String pagePath, String actionPath) {

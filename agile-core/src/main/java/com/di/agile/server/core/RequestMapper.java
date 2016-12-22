@@ -4,8 +4,6 @@ import java.lang.reflect.Method;
 
 /**
  * @author di
- * @date 2016年12月1日 下午2:20:12
- * @since 1.0.0
  */
 public class RequestMapper {
 	private String[] path;

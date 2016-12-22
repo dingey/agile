@@ -2,8 +2,6 @@ package com.di.agile.server.util;
 
 /**
  * @author di
- * @date 2016年12月2日 下午12:32:29
- * @since 1.0.0
  */
 public class ByteUtil {
 	public static byte[] byteMerger(byte[] byte_1, byte[] byte_2) {

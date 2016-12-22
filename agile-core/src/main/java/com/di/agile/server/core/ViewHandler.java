@@ -12,8 +12,6 @@ import com.di.agile.server.util.SessionUtil;
 
 /**
  * @author di
- * @date 2016年11月30日 下午5:18:53
- * @since 1.0.0
  */
 public class ViewHandler implements Runnable {
 	// 就绪的I/O键

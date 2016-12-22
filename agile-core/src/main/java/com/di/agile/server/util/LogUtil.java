@@ -2,8 +2,6 @@ package com.di.agile.server.util;
 
 /**
  * @author di
- * @date 2016年12月1日 下午3:35:41
- * @since 1.0.0
  */
 public class LogUtil {
 	private static LogLevel level = LogLevel.info;

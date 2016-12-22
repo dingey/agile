@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 /**
  * @author di
- * @date 2016年12月1日 下午2:25:03
- * @since 1.0.0
  */
 public class Model {
 	HashMap<String, Object> m = new HashMap<>();

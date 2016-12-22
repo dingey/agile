@@ -10,8 +10,6 @@ import com.di.agile.server.core.RequestHandler;
 
 /**
  * @author di
- * @date 2016年12月2日 下午9:56:44
- * @since 1.0.0
  */
 public class ComponentUtil {
 	public static Object set(String name) {
