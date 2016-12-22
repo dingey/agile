@@ -8,8 +8,6 @@ import java.lang.annotation.Target;
 
 /**
  * @author di
- * @date 2016年11月30日 下午4:33:29
- * @since 1.0.0
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

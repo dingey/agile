@@ -1,14 +1,10 @@
 package com.di.agile.core.server.bean;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author di
- * @date 2016年12月1日 上午9:26:55
- * @since 1.0.0
  */
 public class HttpRequest {
 	private String path;
@@ -29,7 +25,6 @@ public class HttpRequest {
 		String[] ss = requestString.split("\r\n");
 		setMethod(ss[0].split(" ")[0]);
 		String split = "";
-		List<Integer> is = new ArrayList<>();
 		for (int i = 0; i < ss.length; i++) {
 			String s = ss[i];
 			if (s.contains("Accept")) {
@@ -55,7 +50,7 @@ public class HttpRequest {
 			if (s.indexOf("Content-Type") != -1 && s.indexOf("multipart/form-data") != -1) {
 				split = s.substring(s.indexOf("boundary=") + 1).trim();
 			}
-			if (s.startsWith(split)) {
+			if (s.startsWith(split)&&!split.isEmpty()) {
 				break;
 			}
 		}
