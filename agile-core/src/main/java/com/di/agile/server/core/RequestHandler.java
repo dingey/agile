@@ -149,7 +149,7 @@ public class RequestHandler {
 						if (n.equals("")) {
 							n = f.getName();
 						}
-						if (val.equals("")) {
+						if (val == null || val.equals("")) {
 							val = f.getAnnotation(RequestParam.class).defaultValue();
 						}
 					}
