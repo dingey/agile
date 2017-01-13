@@ -25,9 +25,13 @@ public class HttpRequest {
 		String[] ss = requestString.split("\r\n");
 		setMethod(ss[0].split(" ")[0]);
 		String split = "";
+		String reqStr = "";
 		for (int i = 0; i < ss.length; i++) {
 			String s = ss[i];
-			if (s.contains("Accept")) {
+			if (i == 0) {
+				setMethod(s.substring(0, s.indexOf(" ")));
+				reqStr = s.substring(s.indexOf("?") + 1, s.lastIndexOf(" "));
+			} else if (s.contains("Accept")) {
 				setAccept(spit(s));
 			} else if (s.indexOf("Accept-Encoding") != -1) {
 				setAcceptEncoding(spit(s));
@@ -56,10 +60,14 @@ public class HttpRequest {
 		}
 		setPath(ss[0].split(" ")[1]);
 		reqParams = new HashMap<>();
-		if (requestString.split("\r\n\r\n").length < 2) {
+		if (requestString.split("\r\n\r\n").length < 2 && requestString.split("\r\n\r\n")[0].indexOf("?") == -1) {
 			return;
-		} else if (split == null || split.isEmpty()) {
-			String reqStr = requestString.split("\r\n\r\n")[1];
+		} else if (reqStr != null && !reqStr.isEmpty() && reqStr.indexOf("=") != -1) {
+			for (String s : reqStr.split("&")) {
+				reqParams.put(s.split("=")[0], s.split("=")[1]);
+			}
+		} else if (split == null || split.isEmpty()&& reqStr.indexOf("=") != -1) {
+			reqStr = requestString.split("\r\n\r\n")[1];
 			for (String s : reqStr.split("&")) {
 				reqParams.put(s.split("=")[0], s.split("=")[1]);
 			}

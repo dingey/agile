@@ -15,15 +15,15 @@ import com.di.agile.core.server.bean.Model;
  */
 @Controller
 public class HiAction {
-	@RequestParam(defaultValue = "s")
+	@RequestParam
 	private String name;
 	@Autowired
 	private HiService hiService;
 
 	@RequestMapping(path = "/hi.htm")
 	public String hi(Model m, HttpSession session) {
-		String n0=hiService.hi();
-		session.setAttribute("name",name);
+		String n0 = hiService.hi();
+		session.setAttribute("name", name);
 		m.addAttribute("name", name);
 		m.addAttribute("n0", n0);
 		return "hi.ftl";
@@ -32,7 +32,7 @@ public class HiAction {
 	@RequestMapping(path = "/hi2.htm")
 	public String hi2(Model m, HttpSession session) {
 		String n = (String) session.getAttribute("name");
-		String n0=hiService.hi();
+		String n0 = hiService.hi();
 		m.addAttribute("name", n);
 		m.addAttribute("n0", n0);
 		return "hi.ftl";
