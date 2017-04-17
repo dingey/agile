@@ -1,6 +1,7 @@
 package com.di.agile.server.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -33,8 +34,9 @@ public class RequestUtil {
 		return d;
 	}
 
-	public static Object getParameterByRequest(Class<?> type, String name, Map<String, String> reqs) {
+	public static Object getParameterByRequest(Object o, String name, Map<String, String> reqs) {
 		String value = reqs.get(name);
+		Class<?> type=o.getClass();
 		if (type == byte.class || type == Byte.class) {
 			return Byte.valueOf(value);
 		} else if (type == short.class || type == Short.class) {
@@ -57,6 +59,26 @@ public class RequestUtil {
 			}
 		} else if (type == String.class) {
 			return value;
+		}else if(type.isArray()){
+			if(type==Parameter.class){
+				Parameter p=(Parameter)o;
+				Type parameterizedType = p.getParameterizedType();
+				try {
+					Object newInstance = Class.forName(parameterizedType.getTypeName()).newInstance();
+					return getParameterByRequest(newInstance, name+"."+p.getName(), reqs);
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}else if(type==Field.class){
+				Field f=(Field)o;
+				Type genericType = f.getGenericType();
+				try {
+					Object newInstance = Class.forName(genericType.getTypeName()).newInstance();
+					return getParameterByRequest(newInstance, name+"."+f.getName(), reqs);
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
 		} else if (type == Object.class && name.indexOf(".") != -1) {
 			return set(name, type, reqs);
 		}
@@ -67,9 +89,9 @@ public class RequestUtil {
 		Field[] fields = t.getDeclaredFields();
 		for (Field f : fields) {
 			Class<?> type = f.getType();
-			String value=reqs.get(n+"."+f.getName());
-			if(value==null){
-				value=reqs.get(n.substring(n.indexOf(".")+1)+"."+f.getName());
+			String value = reqs.get(n + "." + f.getName());
+			if (value == null) {
+				value = reqs.get(n.substring(n.indexOf(".") + 1) + "." + f.getName());
 			}
 			if (type == byte.class || type == Byte.class) {
 				return Byte.valueOf(value);
@@ -99,25 +121,27 @@ public class RequestUtil {
 				Type type2 = pt.getActualTypeArguments()[0];
 				String typeName = type2.getTypeName();
 				List<Object> os_ = new ArrayList<>();
-				for (@SuppressWarnings("unused") String v : value.split("")) {
+				for (@SuppressWarnings("unused")
+				String v : value.split("")) {
 					Object o0;
 					try {
 						o0 = Class.forName(typeName).newInstance();
-						set(n+"."+f.getName()+"[",type2.getClass(),reqs);
+						set(n + "." + f.getName() + "[", type2.getClass(), reqs);
 						os_.add(o0);
 					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 						e.printStackTrace();
 					}
 				}
-				return set(n+"."+f.getName(), type, reqs);
+				return set(n + "." + f.getName(), type, reqs);
 			} else if (type == Object.class) {
-				return set(n+"."+f.getName(), type, reqs);
+				return set(n + "." + f.getName(), type, reqs);
 			}
 		}
 		return reqs;
 	}
+
 	public static void main(String[] args) {
-		String s="bod.id";
+		String s = "bod.id";
 		System.out.println(s.substring(s.indexOf(".")));
 	}
 }
