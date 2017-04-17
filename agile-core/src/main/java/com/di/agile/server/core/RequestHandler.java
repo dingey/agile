@@ -33,6 +33,7 @@ import com.di.agile.server.util.ClassesUtil;
 import com.di.agile.server.util.ComponentUtil;
 import com.di.agile.server.util.FieldUtil;
 import com.di.agile.server.util.LogUtil;
+import com.di.agile.server.util.RequestUtil;
 
 /**
  * @author di
@@ -157,19 +158,18 @@ public class RequestHandler {
 				}
 			}
 			method.setAccessible(true);
-			if (parameters.length == 0) {
-				result = method.invoke(o, null);
-			} else if (parameters.length == 1 && parameters[0].getType() == Model.class) {
-				result = method.invoke(o, m);
-			} else if (parameters.length == 1 && parameters[0].getType() == HttpSession.class) {
-				result = method.invoke(o, new HttpSession(sessionId));
-			} else if (parameters.length == 2) {
-				if (parameters[0].getType() == Model.class && parameters[1].getType() == HttpSession.class) {
-					result = method.invoke(o, m, new HttpSession(sessionId));
-				} else if (parameters[1].getType() == Model.class && parameters[0].getType() == HttpSession.class) {
-					result = method.invoke(o, new HttpSession(sessionId), m);
+			Object[] args = new Object[parameters.length];
+			for (int i = 0; i < parameters.length; i++) {
+				Parameter p = parameters[i];
+				if (p.getType() == HttpSession.class) {
+					args[i] = new HttpSession(sessionId);
+				} else if (p.getType() == Model.class) {
+					args[i] = new Model();
+				} else {
+					args[i]=RequestUtil.getParameterByRequest(p.getType(), p.getName(), request.getReqParams());
 				}
 			}
+			result = method.invoke(o, args);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| InstantiationException e) {
 			LogUtil.error(e.getLocalizedMessage());
