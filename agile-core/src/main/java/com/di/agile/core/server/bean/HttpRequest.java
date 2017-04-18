@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class HttpRequest {
 	private String path;
-	private Map<String, String> reqParams;
+	private Map<String, String[]> reqParams;
 	private String method;
 	private String host;
 	private String connection;
@@ -64,12 +64,12 @@ public class HttpRequest {
 			return;
 		} else if (reqStr != null && !reqStr.isEmpty() && reqStr.indexOf("=") != -1) {
 			for (String s : reqStr.split("&")) {
-				reqParams.put(s.split("=")[0], s.split("=")[1]);
+				put(s.split("=")[0], s.split("=")[1]);
 			}
 		} else if (split == null || split.isEmpty()&& reqStr.indexOf("=") != -1) {
 			reqStr = requestString.split("\r\n\r\n")[1];
 			for (String s : reqStr.split("&")) {
-				reqParams.put(s.split("=")[0], s.split("=")[1]);
+				put(s.split("=")[0], s.split("=")[1]);
 			}
 		} else if (!split.isEmpty()) {
 			String reqbody = requestString.substring(requestString.indexOf("\r\n\r\n"),
@@ -77,15 +77,31 @@ public class HttpRequest {
 			for (String s : reqbody.split("\r\n--" + reqbody + "\r\n")) {
 				if (s.indexOf("Content-Type") == -1) {
 					String k = s.split("\"\r\n\r\n")[0];
-					reqParams.put(k.substring(k.indexOf("name=\""), k.length() - 1), s.split("\"\r\n\r\n")[1]);
+					put(k.substring(k.indexOf("name=\""), k.length() - 1), s.split("\"\r\n\r\n")[1]);
 				} else {
 					String k = s.split("\r\n\r\n")[0];
-					reqParams.put(k.substring(k.indexOf("name=\""), k.indexOf("\"")), s.split("\r\n\r\n")[1]);
+					put(k.substring(k.indexOf("name=\""), k.indexOf("\"")), s.split("\r\n\r\n")[1]);
 				}
 			}
 		}
 	}
-
+	
+	private void put(String key,String value){
+		String[] strs = reqParams.get(key);
+		if(strs==null||strs.length==0){
+			strs=new String[1];
+			strs[0]=value;
+			reqParams.put(key, strs);
+		}else{
+			String[] strs0=new String[strs.length+1];
+			for(int i=0;i<strs.length;i++){
+				strs0[i]=strs[i];
+			}
+			strs0[strs.length]=value;
+			reqParams.put(key, strs0);
+		}
+	}
+	
 	private String spit(String str) {
 		String s = "";
 		try {
@@ -114,18 +130,18 @@ public class HttpRequest {
 			String rq = path.substring(path.indexOf("?") + 1);
 			reqParams = new HashMap<>();
 			for (String s : rq.split("&")) {
-				reqParams.put(s.split("=")[0], s.split("=")[1]);
+				put(s.split("=")[0], s.split("=")[1]);
 			}
 		} else {
 			this.path = path;
 		}
 	}
 
-	public Map<String, String> getReqParams() {
+	public Map<String, String[]> getReqParams() {
 		return reqParams;
 	}
 
-	public void setReqParams(Map<String, String> reqParams) {
+	public void setReqParams(Map<String, String[]> reqParams) {
 		this.reqParams = reqParams;
 	}
 

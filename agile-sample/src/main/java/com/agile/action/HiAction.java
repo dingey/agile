@@ -4,7 +4,6 @@ import com.agile.service.HiService;
 import com.di.agile.annotation.Autowired;
 import com.di.agile.annotation.Controller;
 import com.di.agile.annotation.RequestMapping;
-import com.di.agile.annotation.RequestParam;
 import com.di.agile.core.server.bean.HttpSession;
 import com.di.agile.core.server.bean.Model;
 
@@ -15,13 +14,12 @@ import com.di.agile.core.server.bean.Model;
  */
 @Controller
 public class HiAction {
-	@RequestParam
-	private String name;
+
 	@Autowired
 	private HiService hiService;
 
 	@RequestMapping(path = "/hi.htm")
-	public String hi(Model m, HttpSession session) {
+	public String hi(String name, Model m, HttpSession session) {
 		String n0 = hiService.hi();
 		session.setAttribute("name", name);
 		m.addAttribute("name", name);

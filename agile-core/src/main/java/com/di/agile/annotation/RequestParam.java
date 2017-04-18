@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ java.lang.annotation.ElementType.FIELD })
+@Target({ java.lang.annotation.ElementType.FIELD,java.lang.annotation.ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RequestParam {

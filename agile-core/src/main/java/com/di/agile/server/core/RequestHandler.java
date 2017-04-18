@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -21,7 +20,6 @@ import com.di.agile.annotation.Controller;
 import com.di.agile.annotation.Repository;
 import com.di.agile.annotation.RequestMapping;
 import com.di.agile.annotation.RequestMethod;
-import com.di.agile.annotation.RequestParam;
 import com.di.agile.annotation.Resource;
 import com.di.agile.annotation.ResponseBody;
 import com.di.agile.annotation.Service;
@@ -31,9 +29,8 @@ import com.di.agile.core.server.bean.HttpSession;
 import com.di.agile.core.server.bean.Model;
 import com.di.agile.server.util.ClassesUtil;
 import com.di.agile.server.util.ComponentUtil;
-import com.di.agile.server.util.FieldUtil;
 import com.di.agile.server.util.LogUtil;
-import com.di.agile.server.util.RequestUtil;
+import com.di.agile.server.util.ReqSetUtil;
 
 /**
  * @author di
@@ -124,7 +121,6 @@ public class RequestHandler {
 		Class<?> handlerClass = mapper.getHandlerClass();
 		Method method = mapper.getInvokeMethod();
 		Parameter[] parameters = mapper.getInvokeMethod().getParameters();
-		Map<String, String> params = request.getReqParams();
 		Field[] fs = handlerClass.getDeclaredFields();
 		Model m = new Model();
 		Object result = null;
@@ -140,21 +136,6 @@ public class RequestHandler {
 						n = f.getName();
 					}
 					f.set(o, ComponentUtil.set(n));
-				} else {
-					String n = f.getName();
-					if (params == null)
-						continue;
-					String val = params.get(f.getName());
-					if (f.isAnnotationPresent(RequestParam.class)) {
-						n = f.getAnnotation(RequestParam.class).name();
-						if (n.equals("")) {
-							n = f.getName();
-						}
-						if (val == null || val.equals("")) {
-							val = f.getAnnotation(RequestParam.class).defaultValue();
-						}
-					}
-					f.set(o, FieldUtil.getVal(f, val));
 				}
 			}
 			method.setAccessible(true);
@@ -164,9 +145,9 @@ public class RequestHandler {
 				if (p.getType() == HttpSession.class) {
 					args[i] = new HttpSession(sessionId);
 				} else if (p.getType() == Model.class) {
-					args[i] = new Model();
+					args[i] = m;
 				} else {
-					args[i]=RequestUtil.getParameterByRequest(p.getType(), p.getName(), request.getReqParams());
+					args[i]=ReqSetUtil.getVal(p, request.getReqParams());
 				}
 			}
 			result = method.invoke(o, args);
