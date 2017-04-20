@@ -8,7 +8,7 @@ import com.di.agile.annotation.RequestMapping;
 import com.di.agile.annotation.ResponseBody;
 import com.di.agile.core.server.bean.HttpSession;
 import com.di.agile.core.server.bean.Model;
-import com.di.toolkit.JsonUtil;
+import com.di.toolkit.JacksonUtil;
 
 /**
  * @author di
@@ -48,6 +48,6 @@ public class HiAction {
 	@ResponseBody
 	@RequestMapping(path = "/m.htm")
 	public String m(Man m) {
-		return JsonUtil.toJson(m);
+		return JacksonUtil.pojoToJson(m);
 	}
 }

@@ -54,9 +54,9 @@ public class HttpRequest {
 			if (s.indexOf("Content-Type") != -1 && s.indexOf("multipart/form-data") != -1) {
 				split = s.substring(s.indexOf("boundary=") + 1).trim();
 			}
-			if (s.startsWith(split) && !split.isEmpty()) {
-				break;
-			}
+			// if (s.startsWith(split) && !split.isEmpty()) {
+			// break;
+			// }
 		}
 		setPath(ss[0].split(" ")[1]);
 		reqParams = new HashMap<>();
@@ -66,7 +66,7 @@ public class HttpRequest {
 			for (String s : reqStr.split("&")) {
 				put(s.split("=")[0], s.split("=")[1]);
 			}
-		} else if (split == null || split.isEmpty()&& reqStr.indexOf("=") != -1) {
+		} else if (split == null || split.isEmpty() && reqStr.indexOf("=") != -1) {
 			reqStr = requestString.split("\r\n\r\n")[1];
 			for (String s : reqStr.split("&")) {
 				put(s.split("=")[0], s.split("=")[1]);
@@ -83,25 +83,31 @@ public class HttpRequest {
 					put(k.substring(k.indexOf("name=\""), k.indexOf("\"")), s.split("\r\n\r\n")[1]);
 				}
 			}
+		} else if (reqParams.size() == 0) {
+			for (String s : ss[ss.length - 1].split("&")) {
+				if (s.split("=").length > 1) {
+					put(s.split("=")[0], s.split("=")[1]);
+				}
+			}
 		}
 	}
-	
-	private void put(String key,String value){
+
+	private void put(String key, String value) {
 		String[] strs = reqParams.get(key);
-		if(strs==null||strs.length==0){
-			strs=new String[1];
-			strs[0]=value;
+		if (strs == null || strs.length == 0) {
+			strs = new String[1];
+			strs[0] = value;
 			reqParams.put(key, strs);
-		}else{
-			String[] strs0=new String[strs.length+1];
-			for(int i=0;i<strs.length;i++){
-				strs0[i]=strs[i];
+		} else {
+			String[] strs0 = new String[strs.length + 1];
+			for (int i = 0; i < strs.length; i++) {
+				strs0[i] = strs[i];
 			}
-			strs0[strs.length]=value;
+			strs0[strs.length] = value;
 			reqParams.put(key, strs0);
 		}
 	}
-	
+
 	private String spit(String str) {
 		String s = "";
 		try {
