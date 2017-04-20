@@ -76,12 +76,21 @@ public class ReqSetUtil {
 				}
 				return os;
 			}
+		}else{
+			Class<?> type2 = p.getType();
+			try {
+				Object newInstance = type2.newInstance();
+				setVal(newInstance, n, 0, reqs);
+				return newInstance;
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
 
 	public static void setVal(Object o, String prefix, int index, Map<String, String[]> reqs) {
-		Field[] fields = o.getClass().getFields();
+		Field[] fields = o.getClass().getDeclaredFields();
 		for (Field f : fields) {
 			f.setAccessible(true);
 			String n = f.getName();
@@ -97,17 +106,17 @@ public class ReqSetUtil {
 			String val = (vs == null || vs.length == 0) ? "" : vs[index];
 			try {
 				if (type == byte.class || type == Byte.class) {
-					f.set(o, Byte.valueOf(val));
+					f.set(o, Byte.valueOf(val.isEmpty()?"0":val));
 				} else if (type == short.class || type == Short.class) {
-					f.set(o, Short.valueOf(val));
+					f.set(o, Short.valueOf(val.isEmpty()?"0":val));
 				} else if (type == int.class || type == Integer.class) {
-					f.set(o, Integer.valueOf(val));
+					f.set(o, Integer.valueOf(val.isEmpty()?"0":val));
 				} else if (type == long.class || type == Long.class) {
-					f.set(o, Long.valueOf(val));
+					f.set(o, Long.valueOf(val.isEmpty()?"0":val));
 				} else if (type == float.class || type == Float.class) {
-					f.set(o, Float.valueOf(val));
+					f.set(o, Float.valueOf(val.isEmpty()?"0":val));
 				} else if (type == double.class || type == Double.class) {
-					f.set(o, Double.valueOf(val));
+					f.set(o, Double.valueOf(val.isEmpty()?"0":val));
 				} else if (type == boolean.class || type == Boolean.class) {
 					f.set(o, Boolean.valueOf(val));
 				} else if (type == java.util.Date.class) {

@@ -1,4 +1,4 @@
-package com.agile.action;
+package com.agile.app;
 
 import com.di.agile.server.AgileServer;
 
