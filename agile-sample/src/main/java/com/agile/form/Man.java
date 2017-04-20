@@ -1,6 +1,10 @@
 package com.agile.form;
 
+import java.util.Date;
+import java.util.List;
+
 import com.di.agile.annotation.RequestParam;
+import com.di.toolkit.data.annotation.DateFormat;
 
 /**
  * @author d
@@ -8,8 +12,18 @@ import com.di.agile.annotation.RequestParam;
 public class Man {
 	private int id;
 	private String name;
+	@DateFormat(pattern="yyyy年MM月dd日")
 	@RequestParam(name = "birth_date")
-	private String birthDate;
+	private Date birthDate;
+	private List<Child> strs;
+
+	public List<Child> getStrs() {
+		return strs;
+	}
+
+	public void setStrs(List<Child> strs) {
+		this.strs = strs;
+	}
 
 	public int getId() {
 		return id;
@@ -27,11 +41,11 @@ public class Man {
 		this.name = name;
 	}
 
-	public String getBirthDate() {
+	public Date getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(String birthDate) {
+	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
 	}
 
