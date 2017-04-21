@@ -1,3 +1,5 @@
 eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
+encoding//src/main/resources/binary=UTF-8
+encoding//src/main/resources/form-data=UTF-8
 encoding//src/test/java=UTF-8

@@ -1,0 +1,33 @@
+POST /hi.htm HTTP/1.1
+cache-control: no-cache
+Postman-Token: dc28c5f1-d3e3-4998-90a2-1a1e10cdb159
+Content-Type: multipart/form-data; boundary=--------------------------478466161505265735837016
+Authorization: Basic aGFuZ3pob3U6SHoyMDE2aHVuYmFzaGE=
+User-Agent: PostmanRuntime/3.0.9
+Accept: */*
+Host: localhost:8090
+cookie: JSESSIONID=EDF013DD00CFE92AE6A185BC1F8C4992; _cookie_user_phone=15321373857; _cookie_user_name=%E5%85%88%E7%94%9FYW; sessionId=pl966sa7
+accept-encoding: gzip, deflate
+content-length: 6201
+Connection: keep-alive
+
+----------------------------478466161505265735837016
+Content-Disposition: form-data; name="remark"; filename="remark.txt"
+Content-Type: text/plain
+
+﻿这是备注
+这是换行
+----------------------------478466161505265735837016
+Content-Disposition: form-data; name="name"
+
+alice
+----------------------------478466161505265735837016
+Content-Disposition: form-data; name="id"
+
+5
+----------------------------478466161505265735837016
+Content-Disposition: form-data; name="img"; filename="bengchi_logo.jpg"
+Content-Type: image/jpeg
+
+����
+----------------------------478466161505265735837016--

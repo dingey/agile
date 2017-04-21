@@ -1,5 +1,7 @@
 package com.agile.action;
 
+import java.io.InputStream;
+
 import com.agile.form.Man;
 import com.agile.service.HiService;
 import com.di.agile.annotation.Autowired;
@@ -49,5 +51,11 @@ public class HiAction {
 	@RequestMapping(path = "/m.htm")
 	public String m(Man m) {
 		return JacksonUtil.pojoToJson(m);
+	}
+	
+	@ResponseBody
+	@RequestMapping(path = "/file.htm")
+	public String file(InputStream is) {
+		return "success";
 	}
 }

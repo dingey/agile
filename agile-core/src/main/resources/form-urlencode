@@ -1,0 +1,14 @@
+POST /hi.htm HTTP/1.1
+cache-control: no-cache
+Postman-Token: 18eab51b-93f0-4a99-ad09-d8c525d6fe4a
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic aGFuZ3pob3U6SHoyMDE2aHVuYmFzaGE=
+User-Agent: PostmanRuntime/3.0.9
+Accept: */*
+Host: localhost:8090
+cookie: JSESSIONID=EDF013DD00CFE92AE6A185BC1F8C4992; _cookie_user_phone=15321373857; _cookie_user_name=%E5%85%88%E7%94%9FYW; sessionId=396j0wqk
+accept-encoding: gzip, deflate
+content-length: 14
+Connection: keep-alive
+
+name=aa&age=52
