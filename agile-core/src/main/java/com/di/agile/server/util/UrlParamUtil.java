@@ -28,24 +28,8 @@ public class UrlParamUtil {
 		return null;
 	}
 	
-	public static Map<String, Object[]> getParamByMultipart(String url) {
-		int from = url.indexOf("?");
-		int to = url.indexOf("#");
-		if (from == -1) {
-			from = 0;
-		}
-		if (to == -1) {
-			from = url.length();
-		}
-		String str = url.substring(from, to);
-		Map<String, Object[]> reqs = new HashMap<>();
-		for (String s : str.split("&")) {
-			if (s.split("=").length > 1) {
-				put(reqs, s.split("=")[0], s.split("=")[1]);
-			} else if (s.split("=").length == 1) {
-				put(reqs, s.split("=")[0], null);
-			}
-		}
+	public static Map<String, Object[]> getParamByMultipart(String url,String boundary) {
+		
 		return null;
 	}
 

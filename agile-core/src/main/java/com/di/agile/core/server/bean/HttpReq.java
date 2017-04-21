@@ -65,7 +65,7 @@ public class HttpReq {
 				if(this.contentType==HttpContentType.FORM_URLENCODED){
 					reqs=UrlParamUtil.getParamByGet(s);
 				}else if (this.contentType==HttpContentType.MULTIPART) {
-					reqs=UrlParamUtil.getParamByMultipart(s);
+					reqs=UrlParamUtil.getParamByMultipart(s,this.boundary);
 				}
 			}
 		}
