@@ -12,16 +12,19 @@ import com.di.agile.core.server.bean.MultipartFile;
  */
 public class UrlParamUtil {
 	public static Map<String, Object[]> getParamByGet(String url) {
-		int from = url.indexOf("?");
+		Map<String, Object[]> reqs = new HashMap<>();
+		int from = url.indexOf("?")+1;
 		int to = url.indexOf("#");
 		if (from == -1) {
 			from = 0;
 		}
 		if (to == -1) {
-			from = url.length();
+			to = url.length();
+		}
+		if (from > to || to > url.length()) {
+			return reqs;
 		}
 		String str = url.substring(from, to);
-		Map<String, Object[]> reqs = new HashMap<>();
 		for (String s : str.split("&")) {
 			if (s.split("=").length > 1) {
 				put(reqs, s.split("=")[0], s.split("=")[1]);
@@ -29,7 +32,7 @@ public class UrlParamUtil {
 				put(reqs, s.split("=")[0], null);
 			}
 		}
-		return null;
+		return reqs;
 	}
 
 	public static Map<String, Object[]> getParamByMultipart(byte[] bytes, String boundary) {

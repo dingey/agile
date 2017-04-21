@@ -42,6 +42,9 @@ public class HttpReq {
 				this.method = HttpMethod.getEnumByName(s);
 				this.path = s.split(" ")[1];
 				this.reqs = UrlParamUtil.getParamByGet(this.path);
+				if (this.path.indexOf("?") != -1) {
+					this.path = path.substring(0, path.indexOf("?"));
+				}
 			} else if (s.indexOf("POST") != -1) {
 				this.method = HttpMethod.getEnumByName(s);
 				this.path = s.split(" ")[1];
@@ -69,22 +72,24 @@ public class HttpReq {
 				break;
 			}
 		}
-		List<byte[]> subList = list.subList(index, list.size());
-		List<Byte> bs = new ArrayList<>();
-		for (byte[] bb : subList) {
-			for (byte b : bb) {
-				bs.add(b);
+		if (this.method == HttpMethod.POST) {
+			List<byte[]> subList = list.subList(index, list.size());
+			List<Byte> bs = new ArrayList<>();
+			for (byte[] bb : subList) {
+				for (byte b : bb) {
+					bs.add(b);
+				}
 			}
-		}
-		byte[] bs0 = new byte[bs.size()];
-		for (int i = 0; i < bs0.length; i++) {
-			bs0[i] = bs.get(i);
-		}
-		setBody(bs0);
-		if(this.contentType==HttpContentType.FORM_URLENCODED){
-			reqs=UrlParamUtil.getParamByGet(new String(getBody()));
-		}else if (this.contentType==HttpContentType.MULTIPART) {
-			reqs=UrlParamUtil.getParamByMultipart(getBody(),this.boundary);
+			byte[] bs0 = new byte[bs.size()];
+			for (int i = 0; i < bs0.length; i++) {
+				bs0[i] = bs.get(i);
+			}
+			setBody(bs0);
+			if (this.contentType == HttpContentType.FORM_URLENCODED) {
+				reqs = UrlParamUtil.getParamByGet(new String(getBody()));
+			} else if (this.contentType == HttpContentType.MULTIPART) {
+				reqs = UrlParamUtil.getParamByMultipart(getBody(), this.boundary);
+			}
 		}
 	}
 
