@@ -1,5 +1,6 @@
 package com.di.agile.core.server.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ public class HttpReq {
 	private String boundary;
 	private Map<String, Object[]> reqs;
 	private String sessionId;
+	private byte[] body;
 
 	public HttpReq() {
 		super();
@@ -33,6 +35,7 @@ public class HttpReq {
 
 	public HttpReq(byte[] bytes) {
 		List<byte[]> list = ByteUtil.splitByRN(bytes);
+		int index = 0;
 		for (int i = 0; i < list.size(); i++) {
 			String s = new String(list.get(i));
 			if (s.indexOf("GET") != -1) {
@@ -61,14 +64,36 @@ public class HttpReq {
 				this.connection = s.split(":")[1];
 			} else if (s.isEmpty() && this.method == HttpMethod.GET) {
 				return;
-			} else if (this.method == HttpMethod.POST) {
-				if(this.contentType==HttpContentType.FORM_URLENCODED){
-					reqs=UrlParamUtil.getParamByGet(s);
-				}else if (this.contentType==HttpContentType.MULTIPART) {
-					reqs=UrlParamUtil.getParamByMultipart(s,this.boundary);
-				}
+			} else if (s.equals("\r\n")) {
+				index = i;
+				break;
 			}
 		}
+		List<byte[]> subList = list.subList(index, list.size());
+		List<Byte> bs = new ArrayList<>();
+		for (byte[] bb : subList) {
+			for (byte b : bb) {
+				bs.add(b);
+			}
+		}
+		byte[] bs0 = new byte[bs.size()];
+		for (int i = 0; i < bs0.length; i++) {
+			bs0[i] = bs.get(i);
+		}
+		setBody(bs0);
+		if(this.contentType==HttpContentType.FORM_URLENCODED){
+			reqs=UrlParamUtil.getParamByGet(new String(getBody()));
+		}else if (this.contentType==HttpContentType.MULTIPART) {
+			reqs=UrlParamUtil.getParamByMultipart(getBody(),this.boundary);
+		}
+	}
+
+	public byte[] getBody() {
+		return body;
+	}
+
+	public void setBody(byte[] body) {
+		this.body = body;
 	}
 
 	public String getConnection() {

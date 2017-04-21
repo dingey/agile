@@ -41,8 +41,41 @@ public class ByteUtil {
 		return tmps;
 	}
 
+	public static List<byte[]> splitByBoundary(byte[] bytes, String boundary) {
+		List<Integer> indexs = new ArrayList<>();
+		String b0 = "--" + boundary;
+		if (bytes.length > 0 && bytes.length > b0.getBytes().length) {
+			indexs.add(0);
+			for (int i = 0; i < bytes.length - 1; i++) {
+				boolean b = true;
+				for (int j = 0; j < b0.getBytes().length; j++) {
+					if (bytes[i + j] != b0.getBytes()[j]) {
+						b = false;
+						break;
+					}
+				}
+				if (b) {
+					indexs.add(i);
+				}
+			}
+		}
+		if (indexs.get(indexs.size() - 1) < bytes.length) {
+			indexs.add(bytes.length);
+		}
+		List<byte[]> tmps = new ArrayList<>();
+		for (int i = 0; i < indexs.size() - 1; i++) {
+			int from = indexs.get(i) + b0.getBytes().length + 4;
+			int to = indexs.get(i + 1);
+			if (from < to) {
+				byte[] bs = Arrays.copyOfRange(bytes, from, to);
+				tmps.add(bs);
+			}
+		}
+		return tmps;
+	}
+
 	public static void main(String[] args) {
-		byte[] bs = { '5', 'a', '\r', '\n', '6', '\r', '\n' , '\r', '\n'};
+		byte[] bs = { '5', 'a', '\r', '\n', '6', '\r', '\n', '\r', '\n' };
 		List<byte[]> split = splitByRN(bs);
 		for (byte[] b : split) {
 			String string = new String(b);

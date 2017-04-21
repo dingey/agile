@@ -1,7 +1,11 @@
 package com.di.agile.server.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.di.agile.core.server.bean.MultipartFile;
 
 /**
  * @author di
@@ -27,10 +31,40 @@ public class UrlParamUtil {
 		}
 		return null;
 	}
-	
-	public static Map<String, Object[]> getParamByMultipart(String url,String boundary) {
-		
-		return null;
+
+	public static Map<String, Object[]> getParamByMultipart(byte[] bytes, String boundary) {
+		Map<String, Object[]> m = new HashMap<>();
+		List<byte[]> bounds = ByteUtil.splitByBoundary(bytes, boundary);
+		for (byte[] bs : bounds) {
+			List<byte[]> lines = ByteUtil.splitByRN(bs);
+			String s = new String(lines.get(0));
+			if (s.indexOf("filename") == -1) {
+				String s0 = s.split(";")[1];
+				String name = s0.substring(s0.indexOf("name=")).replace("\"", "").trim();
+				String val = new String(lines.get(2));
+				put(m, name, val);
+			} else {
+				String s0 = s.split(";")[1];
+				String name = s0.substring(s0.indexOf("name=")).replace("\"", "").trim();
+				String filename = s.substring(s.indexOf("filename=")).replace("\"", "").trim();
+				MultipartFile f = new MultipartFile();
+				f.setOriginalFilename(filename);
+				f.setContentType(new String(lines.get(1)).split(":")[1]);
+				List<Byte> tmps = new ArrayList<>();
+				for (int i = 3; i < lines.size(); i++) {
+					for (byte b : lines.get(i)) {
+						tmps.add(b);
+					}
+				}
+				byte[] tps = new byte[tmps.size()];
+				for (int i = 0; i < tmps.size(); i++) {
+					tps[i] = tmps.get(i);
+				}
+				f.setBytes(tps);
+				put(m, name, f);
+			}
+		}
+		return m;
 	}
 
 	public static void put(Map<String, Object[]> map, String key, Object val) {
