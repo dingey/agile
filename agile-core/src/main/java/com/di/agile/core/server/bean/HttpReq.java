@@ -1,6 +1,7 @@
 package com.di.agile.core.server.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,11 @@ public class HttpReq {
 				this.acceptEncoding = s.split(":")[1];
 			} else if (s.indexOf("Connection") != -1) {
 				this.connection = s.split(":")[1];
+			} else if (s.indexOf("Cookie") != -1) {
+				setCookie(s);
+				if (s.indexOf("sessionId") != -1) {
+					setSessionId(s.substring(s.indexOf("sessionId=")+10));
+				}
 			} else if (s.isEmpty() && this.method == HttpMethod.GET) {
 				return;
 			} else if (s.equals("\r\n")) {
@@ -90,6 +96,17 @@ public class HttpReq {
 			} else if (this.contentType == HttpContentType.MULTIPART) {
 				reqs = UrlParamUtil.getParamByMultipart(getBody(), this.boundary);
 			}
+		}
+	}
+
+	public void setCookie(String s) {
+		if (cookies == null) {
+			cookies = new HashMap<>();
+		}
+		if (s.split(";").length < 2) {
+			cookies.put(s.split(":")[1].split("=")[0], s.split(":")[1].split("=")[1]);
+		} else {
+			cookies.put(s.split(":")[1].split(";")[1].split("=")[0], s.split(":")[1].split(";")[1].split("=")[1]);
 		}
 	}
 
