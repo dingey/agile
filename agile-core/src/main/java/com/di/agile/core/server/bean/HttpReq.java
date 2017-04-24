@@ -1,6 +1,5 @@
 package com.di.agile.core.server.bean;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ public class HttpReq {
 
 	public HttpReq(byte[] bytes) {
 		List<byte[]> list = ByteUtil.splitByRN(bytes);
-		int index = 0;
 		for (int i = 0; i < list.size(); i++) {
 			String s = new String(list.get(i));
 			if (s.indexOf("GET") != -1) {
@@ -74,25 +72,11 @@ public class HttpReq {
 			} else if (s.isEmpty() && this.method == HttpMethod.GET) {
 				return;
 			} else if (s.equals("\r\n") || s.equals("")) {
-				index = i;
 				break;
 			}
 		}
 		if (this.method == HttpMethod.POST) {
-			List<byte[]> subList = list.subList(index, list.size());
-			List<Byte> bs = new ArrayList<>();
-			for (byte[] bb : subList) {
-				for (byte b : bb) {
-					bs.add(b);
-				}
-				bs.add((byte) '\r');
-				bs.add((byte) '\n');
-			}
-			byte[] bs0 = new byte[bs.size()];
-			for (int i = 0; i < bs0.length; i++) {
-				bs0[i] = bs.get(i);
-			}
-			setBody(bs0);
+			setBody(ByteUtil.getBodyByBoundary(bytes, boundary));
 			if (this.contentType == HttpContentType.FORM_URLENCODED) {
 				reqs = UrlParamUtil.getParamByGet(new String(getBody()));
 			} else if (this.contentType == HttpContentType.MULTIPART) {

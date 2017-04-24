@@ -18,7 +18,7 @@ import com.di.agile.server.util.LogUtil;
 public class HttpServer implements Runnable {
 	int port = 8081;
 	private boolean interrupted = false;
-	private int capacity = 1024 * 1024;//1MB
+	private int capacity = 10 * 1024 * 1024;// 10MB
 
 	public HttpServer(boolean interrupted) {
 		this.interrupted = interrupted;
@@ -71,7 +71,7 @@ public class HttpServer implements Runnable {
 						} catch (Exception e) {
 							LogUtil.error("读取socketChannel出错");
 						}
-						if (requestBytes!=null&&requestBytes.length > 0) {
+						if (requestBytes != null && requestBytes.length > 0) {
 							LogUtil.info(new String(requestBytes));
 							LogUtil.info("启动了子线程..");
 							new Thread(new HttpHandler(requestBytes, key)).start();

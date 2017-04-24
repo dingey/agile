@@ -37,6 +37,7 @@ public class HttpHandler implements Runnable {
 	private HttpReq request;
 	private HttpResponse response;
 	private String sessionId;
+	private int capacity = 10 * 1024 * 1024;// 10MB
 
 	public HttpHandler(byte[] requestHeader, SelectionKey key) {
 		this.key = key;
@@ -58,12 +59,12 @@ public class HttpHandler implements Runnable {
 
 	public void handler() {
 		// 从context中得到相应的参数
-		buffer = ByteBuffer.allocate(1024);
+		buffer = ByteBuffer.allocate(capacity);
 		selector = key.selector();
 		channel = (SocketChannel) key.channel();
 		process(sessionId, request, response);
 		LogUtil.info("path : " + request.getPath());
-		buffer = ByteBuffer.allocate(20240);
+		buffer = ByteBuffer.allocate(capacity);
 		LogUtil.info(response.writer());
 		if (response.getBodys() != null) {
 			buffer.put(response.writerFile());
@@ -82,14 +83,15 @@ public class HttpHandler implements Runnable {
 
 	public static void process(String sessionId, HttpReq request, HttpResponse resp) {
 		LogUtil.info("process : " + request.getPath());
-		RequestMapper mapper = RequestHandler.maps.get(request.getPath());
+		RequestMapper mapper = RequestHandler.maps.get(request.getPath() == null ? "" : request.getPath());
 		if (mapper == null) {
 			InputStream in = null;
 			try {
 				String path = Thread.currentThread().getContextClassLoader().getResource("").toURI().getPath();
+				String p1 = request.getPath() == null ? "" : request.getPath().replaceFirst("/", "");
 				LogUtil.info("file path:" + path);
-				LogUtil.info("load file path:" + path + request.getPath().replaceFirst("/", ""));
-				in = new FileInputStream(path + request.getPath().replaceFirst("/", ""));
+				LogUtil.info("load file path:" + path + p1);
+				in = new FileInputStream(path + p1);
 				resp.setBody(null);
 				byte[] b = new byte[in.available()];
 				in.read(b);

@@ -74,12 +74,36 @@ public class ByteUtil {
 		return tmps;
 	}
 
-	public static void main(String[] args) {
-		byte[] bs = { '5', 'a', '\r', '\n', '6', '\r', '\n', '\r', '\n' };
-		List<byte[]> split = splitByRN(bs);
-		for (byte[] b : split) {
-			String string = new String(b);
-			System.out.println(string);
+	public static byte[] getBodyByBoundary(byte[] bytes, String boundary) {
+		String b0 = "--" + boundary;
+		int index = 0;
+		if (bytes.length > 0 && bytes.length > b0.getBytes().length) {
+			for (int i = 0; i < bytes.length - 1; i++) {
+				boolean b = true;
+				for (int j = 0; j < b0.getBytes().length; j++) {
+					if ((i + j) < bytes.length && bytes[i + j] != b0.getBytes()[j]) {
+						b = false;
+						break;
+					}
+				}
+				if (b) {
+					index = i;
+					break;
+				}
+			}
 		}
+		byte[] tmp = new byte[bytes.length - index];
+		for (int i = index; i < bytes.length; i++) {
+			tmp[i - index] = bytes[i];
+		}
+		return tmp;
+	}
+
+	public static void main(String[] args) {
+		byte[] bs = { '5', 'a', '\r', '\n', '6', '-', '-', 'a', '7', '6', '6', '\r', '\n', '\r', '\n' };
+		String b = "a7";
+		byte[] split = getBodyByBoundary(bs, b);
+		String string = new String(split);
+		System.out.println(string);
 	}
 }
