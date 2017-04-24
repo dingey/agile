@@ -1,6 +1,5 @@
 package com.di.agile.server.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,33 +38,25 @@ public class UrlParamUtil {
 		Map<String, Object[]> m = new HashMap<>();
 		List<byte[]> bounds = ByteUtil.splitByBoundary(bytes, boundary);
 		for (byte[] bs : bounds) {
-			List<byte[]> lines = ByteUtil.splitByRN(bs);
+			List<byte[]> lines = ByteUtil.splitByRNRN(bs);
 			String s = new String(lines.get(0));
 			if (s.equals("\r\n")) {
 				continue;
 			} else if (s.indexOf("filename") == -1) {
-				String s0 = s.split(";")[1];
-				String name = s0.substring(s0.indexOf("name=")+5).replace("\"", "").trim();
-				String val = lines.size() > 1 ? new String(lines.get(2)) : "";
-				put(m, name, val);
+				String s0 = s.split("\r\n")[0];
+				if (s0.indexOf("anme=") != -1) {
+					String name = s0.substring(s0.indexOf("name=") + 6).replace("\"", "").trim();
+					String val = new String(lines.get(1));
+					put(m, name, val);
+				}
 			} else {
-				String s0 = s.split(";")[1];
-				String name = s0.substring(s0.indexOf("name=")+5).replace("\"", "").trim();
-				String filename = s.substring(s.indexOf("filename=")+9).replace("\"", "").trim();
+				String s0 = s.split("\r\n")[0];
+				String name = s0.substring(s0.indexOf("name=\"") + 6, s0.indexOf("\"; filename")).trim();
+				String filename = s0.substring(s.indexOf("filename=") + 10).replace("\"", "").trim();
 				MultipartFile f = new MultipartFile();
 				f.setOriginalFilename(filename);
-				f.setContentType(new String(lines.get(1)).split(":")[1]);
-				List<Byte> tmps = new ArrayList<>();
-				for (int i = 3; i < lines.size(); i++) {
-					for (byte b : lines.get(i)) {
-						tmps.add(b);
-					}
-				}
-				byte[] tps = new byte[tmps.size()];
-				for (int i = 0; i < tmps.size(); i++) {
-					tps[i] = tmps.get(i);
-				}
-				f.setBytes(tps);
+				f.setContentType(s.split("\r\n")[1].split(":")[1]);
+				f.setBytes(lines.get(1));
 				put(m, name, f);
 			}
 		}

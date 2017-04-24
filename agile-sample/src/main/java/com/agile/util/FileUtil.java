@@ -10,8 +10,11 @@ import java.io.OutputStream;
  */
 public class FileUtil {
 	public static void save(byte[] bytes, String path) {
-		File f = new File(path);
 		try {
+			File f = new File(path);
+			if(!f.exists()){
+				f.createNewFile();
+			}
 			OutputStream out = new FileOutputStream(f);
 			out.write(bytes);
 			out.flush();
