@@ -13,7 +13,7 @@ import com.di.agile.core.server.bean.MultipartFile;
 public class UrlParamUtil {
 	public static Map<String, Object[]> getParamByGet(String url) {
 		Map<String, Object[]> reqs = new HashMap<>();
-		int from = url.indexOf("?")+1;
+		int from = url.indexOf("?") + 1;
 		int to = url.indexOf("#");
 		if (from == -1) {
 			from = 0;
@@ -41,15 +41,17 @@ public class UrlParamUtil {
 		for (byte[] bs : bounds) {
 			List<byte[]> lines = ByteUtil.splitByRN(bs);
 			String s = new String(lines.get(0));
-			if (s.indexOf("filename") == -1) {
+			if (s.equals("\r\n")) {
+				continue;
+			} else if (s.indexOf("filename") == -1) {
 				String s0 = s.split(";")[1];
-				String name = s0.substring(s0.indexOf("name=")).replace("\"", "").trim();
-				String val = new String(lines.get(2));
+				String name = s0.substring(s0.indexOf("name=")+5).replace("\"", "").trim();
+				String val = lines.size() > 1 ? new String(lines.get(2)) : "";
 				put(m, name, val);
 			} else {
 				String s0 = s.split(";")[1];
-				String name = s0.substring(s0.indexOf("name=")).replace("\"", "").trim();
-				String filename = s.substring(s.indexOf("filename=")).replace("\"", "").trim();
+				String name = s0.substring(s0.indexOf("name=")+5).replace("\"", "").trim();
+				String filename = s.substring(s.indexOf("filename=")+9).replace("\"", "").trim();
 				MultipartFile f = new MultipartFile();
 				f.setOriginalFilename(filename);
 				f.setContentType(new String(lines.get(1)).split(":")[1]);

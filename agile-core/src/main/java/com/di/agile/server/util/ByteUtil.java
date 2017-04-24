@@ -49,7 +49,7 @@ public class ByteUtil {
 			for (int i = 0; i < bytes.length - 1; i++) {
 				boolean b = true;
 				for (int j = 0; j < b0.getBytes().length; j++) {
-					if (bytes[i + j] != b0.getBytes()[j]) {
+					if ((i + j) < bytes.length && bytes[i + j] != b0.getBytes()[j]) {
 						b = false;
 						break;
 					}

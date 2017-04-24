@@ -69,11 +69,11 @@ public class HttpReq {
 			} else if (s.indexOf("Cookie") != -1) {
 				setCookie(s);
 				if (s.indexOf("sessionId") != -1) {
-					setSessionId(s.substring(s.indexOf("sessionId=")+10));
+					setSessionId(s.substring(s.indexOf("sessionId=") + 10));
 				}
 			} else if (s.isEmpty() && this.method == HttpMethod.GET) {
 				return;
-			} else if (s.equals("\r\n")) {
+			} else if (s.equals("\r\n") || s.equals("")) {
 				index = i;
 				break;
 			}
@@ -85,6 +85,8 @@ public class HttpReq {
 				for (byte b : bb) {
 					bs.add(b);
 				}
+				bs.add((byte) '\r');
+				bs.add((byte) '\n');
 			}
 			byte[] bs0 = new byte[bs.size()];
 			for (int i = 0; i < bs0.length; i++) {
@@ -262,7 +264,7 @@ public class HttpReq {
 	}
 
 	public static enum HttpMethod {
-		GET("get"), POST("post");
+		GET("GET"), POST("POST");
 
 		private String name;
 

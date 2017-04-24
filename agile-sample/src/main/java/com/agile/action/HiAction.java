@@ -1,15 +1,15 @@
 package com.agile.action;
 
-import java.io.InputStream;
-
 import com.agile.form.Man;
 import com.agile.service.HiService;
+import com.agile.util.FileUtil;
 import com.di.agile.annotation.Autowired;
 import com.di.agile.annotation.Controller;
 import com.di.agile.annotation.RequestMapping;
 import com.di.agile.annotation.ResponseBody;
 import com.di.agile.core.server.bean.HttpSession;
 import com.di.agile.core.server.bean.Model;
+import com.di.agile.core.server.bean.MultipartFile;
 import com.di.toolkit.JacksonUtil;
 
 /**
@@ -52,10 +52,11 @@ public class HiAction {
 	public String m(Man m) {
 		return JacksonUtil.pojoToJson(m);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(path = "/file.htm")
-	public String file(InputStream is) {
-		return "success";
+	public String file(MultipartFile file) {
+		FileUtil.save(file.getBytes(), "d:/tmp/" + file.getOriginalFilename());
+		return "success:" + file.getOriginalFilename();
 	}
 }

@@ -22,7 +22,7 @@ public class HttpReqUtil {
 		Class<?> type = p.getType();
 		String n = p.getName();
 		Object[] vs = reqs.get(n);
-		Object val=vs==null?"":vs[0];
+		Object val = vs == null ? "" : vs[0];
 		if (p.isAnnotationPresent(RequestParam.class)) {
 			n = p.getAnnotation(RequestParam.class).name();
 			if (val.toString().isEmpty() || val == null) {
@@ -30,29 +30,29 @@ public class HttpReqUtil {
 			}
 		}
 		if (type == byte.class || type == Byte.class) {
-			return Byte.valueOf((String)val);
+			return Byte.valueOf((String) val);
 		} else if (type == short.class || type == Short.class) {
-			return Short.valueOf((String)val);
+			return Short.valueOf((String) val);
 		} else if (type == int.class || type == Integer.class) {
-			return Integer.valueOf((String)val);
+			return Integer.valueOf((String) val);
 		} else if (type == long.class || type == Long.class) {
-			return Long.valueOf((String)val);
+			return Long.valueOf((String) val);
 		} else if (type == float.class || type == Float.class) {
-			return Float.valueOf((String)val);
+			return Float.valueOf((String) val);
 		} else if (type == double.class || type == Double.class) {
-			return Double.valueOf((String)val);
+			return Double.valueOf((String) val);
 		} else if (type == boolean.class || type == Boolean.class) {
-			return Boolean.valueOf((String)val);
+			return Boolean.valueOf((String) val);
 		} else if (type == java.util.Date.class) {
-			return RequestUtil.get((String)val);
+			return RequestUtil.get((String) val);
 		} else if (type == char.class || type == Character.class) {
 			if (val != null && !val.toString().isEmpty()) {
 				return val.toString().charAt(0);
 			}
 		} else if (type == String.class) {
 			return val.toString();
-		}else if(type==com.di.agile.core.server.bean.MultipartFile.class){
-			return val;
+		} else if (type == com.di.agile.core.server.bean.MultipartFile.class) {
+			return vs == null ? null : vs[0];
 		} else if (type.isArray()) {
 			Type type2 = p.getParameterizedType();
 			if (vs.length > 0) {
@@ -83,24 +83,24 @@ public class HttpReqUtil {
 					for (int i = 0; i < vs.length; i++) {
 						os[i] = getDate((String) vs[i]);
 					}
-				}else if (type2 == com.di.agile.core.server.bean.MultipartFile.class) {
+				} else if (type2 == com.di.agile.core.server.bean.MultipartFile.class) {
 					return vs;
 				} else {
 					int count = 0;
-					Map<String,Integer> ss=new HashMap<>();
+					Map<String, Integer> ss = new HashMap<>();
 					for (String s : reqs.keySet()) {
 						if (s.indexOf(n) != -1) {
 							Integer in = ss.get(s);
-							if(in==null){
+							if (in == null) {
 								ss.put(s, reqs.get(s).length);
-							}else{
-								ss.put(s, reqs.get(s).length+in);
+							} else {
+								ss.put(s, reqs.get(s).length + in);
 							}
 						}
 					}
-					for(String s1:ss.keySet()){
-						if(ss.get(s1)>count){
-							count=ss.get(s1);
+					for (String s1 : ss.keySet()) {
+						if (ss.get(s1) > count) {
+							count = ss.get(s1);
 						}
 					}
 					for (int i = 0; i < count; i++) {
@@ -147,26 +147,26 @@ public class HttpReqUtil {
 					for (int i = 0; i < vs.length; i++) {
 						os.add(getDate((String) vs[i]));
 					}
-				} else if (type2 ==com.di.agile.core.server.bean.MultipartFile.class) {
+				} else if (type2 == com.di.agile.core.server.bean.MultipartFile.class) {
 					for (int i = 0; i < vs.length; i++) {
 						os.add(vs[i]);
 					}
 				} else {
 					int count = 0;
-					Map<String,Integer> ss=new HashMap<>();
+					Map<String, Integer> ss = new HashMap<>();
 					for (String s : reqs.keySet()) {
 						if (s.indexOf(n) != -1) {
 							Integer in = ss.get(s);
-							if(in==null){
+							if (in == null) {
 								ss.put(s, reqs.get(s).length);
-							}else{
-								ss.put(s, reqs.get(s).length+in);
+							} else {
+								ss.put(s, reqs.get(s).length + in);
 							}
 						}
 					}
-					for(String s1:ss.keySet()){
-						if(ss.get(s1)>count){
-							count=ss.get(s1);
+					for (String s1 : ss.keySet()) {
+						if (ss.get(s1) > count) {
+							count = ss.get(s1);
 						}
 					}
 					for (int i = 0; i < count; i++) {
@@ -234,7 +234,7 @@ public class HttpReqUtil {
 					f.set(o, val);
 				} else if (type == com.di.agile.core.server.bean.MultipartFile.class) {
 					f.set(o, val);
-				}else if (type.isArray()) {
+				} else if (type.isArray()) {
 					Type genericType = f.getGenericType();
 					Object[] os = new Object[vs.length];
 					if (genericType == java.lang.String.class) {
@@ -265,22 +265,22 @@ public class HttpReqUtil {
 						}
 					} else if (type == com.di.agile.core.server.bean.MultipartFile.class) {
 						//
-					}else {
+					} else {
 						int count = 0;
-						Map<String,Integer> ss=new HashMap<>();
+						Map<String, Integer> ss = new HashMap<>();
 						for (String s : reqs.keySet()) {
 							if (s.indexOf(n) != -1) {
 								Integer in = ss.get(s);
-								if(in==null){
+								if (in == null) {
 									ss.put(s, reqs.get(s).length);
-								}else{
-									ss.put(s, reqs.get(s).length+in);
+								} else {
+									ss.put(s, reqs.get(s).length + in);
 								}
 							}
 						}
-						for(String s1:ss.keySet()){
-							if(ss.get(s1)>count){
-								count=ss.get(s1);
+						for (String s1 : ss.keySet()) {
+							if (ss.get(s1) > count) {
+								count = ss.get(s1);
 							}
 						}
 						for (int i = 0; i < count; i++) {
@@ -328,24 +328,24 @@ public class HttpReqUtil {
 						}
 					} else {
 						int count = 0;
-						Map<String,Integer> ss=new HashMap<>();
+						Map<String, Integer> ss = new HashMap<>();
 						for (String s : reqs.keySet()) {
 							if (s.indexOf(n) != -1) {
 								Integer in = ss.get(s);
-								if(in==null){
+								if (in == null) {
 									ss.put(s, reqs.get(s).length);
-								}else{
-									ss.put(s, reqs.get(s).length+in);
+								} else {
+									ss.put(s, reqs.get(s).length + in);
 								}
 							}
 						}
-						for(String s1:ss.keySet()){
-							if(ss.get(s1)>count){
-								count=ss.get(s1);
+						for (String s1 : ss.keySet()) {
+							if (ss.get(s1) > count) {
+								count = ss.get(s1);
 							}
 						}
 						for (int i = 0; i < count; i++) {
-							ParameterizedType pt=(ParameterizedType)genericType;
+							ParameterizedType pt = (ParameterizedType) genericType;
 							Type type2 = pt.getActualTypeArguments()[0];
 							Object newInstance = Class.forName(type2.getTypeName()).newInstance();
 							setVal(newInstance, n, i, reqs);

@@ -42,7 +42,7 @@ public class HttpHandler implements Runnable {
 		this.key = key;
 		request = new HttpReq(requestHeader);
 		response = new HttpResponse();
-		response.setDomain(request.getHost().trim());
+		response.setDomain(request.getHost() == null ? "" : request.getHost().trim());
 		if (!SessionUtil.contains(request.getSessionId())) {
 			sessionId = SessionUtil.generateSessionId();
 		} else {
@@ -79,7 +79,7 @@ public class HttpHandler implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void process(String sessionId, HttpReq request, HttpResponse resp) {
 		LogUtil.info("process : " + request.getPath());
 		RequestMapper mapper = RequestHandler.maps.get(request.getPath());
@@ -135,7 +135,7 @@ public class HttpHandler implements Runnable {
 				} else if (p.getType() == Model.class) {
 					args[i] = m;
 				} else {
-					args[i]=HttpReqUtil.getVal(p, request.getReqs());
+					args[i] = HttpReqUtil.getVal(p, request.getReqs());
 				}
 			}
 			result = method.invoke(o, args);
