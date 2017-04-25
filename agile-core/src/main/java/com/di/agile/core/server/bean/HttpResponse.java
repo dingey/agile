@@ -96,7 +96,7 @@ public class HttpResponse {
 		Str s = new Str();
 		s.line("HTTP/1.1 200 OK");
 		s.add("Content-Type:")
-				.line((getContentType() == null || getContentType().isEmpty()) ? "text/plain" : getContentType());
+				.line((getContentType() == null || getContentType().isEmpty()) ? "text/html; charset=utf-8" : getContentType());
 		s.add("Content-Length:").line(String.valueOf(getBody().length()));
 		s.add("Date:").line(new Date().toString());
 		s.add("Set-Cookie:sessionId=").add(getSessionId()).add(";Max-Age=1800000;").add(" Path=/;").add(" Domain=")

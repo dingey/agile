@@ -28,7 +28,7 @@ import com.di.agile.server.util.SessionUtil;
 /**
  * @author di
  */
-public class HttpHandler implements Runnable {
+public class HttpHandler extends Thread {
 	// 就绪的I/O键
 	private SelectionKey key;
 	private Selector selector;
@@ -37,7 +37,7 @@ public class HttpHandler implements Runnable {
 	private HttpReq request;
 	private HttpResponse response;
 	private String sessionId;
-	private int capacity = 10 * 1024 * 1024;// 10MB
+	private int capacity = 100 * 1024 * 1024;// 10MB
 
 	public HttpHandler(byte[] requestHeader, SelectionKey key) {
 		this.key = key;
@@ -73,6 +73,9 @@ public class HttpHandler implements Runnable {
 		}
 		// 从写模式，切换到读模式
 		buffer.flip();
+		if(!channel.isConnected()){
+			return;
+		}
 		try {
 			channel.register(selector, SelectionKey.OP_WRITE);
 			channel.write(buffer);
@@ -81,7 +84,7 @@ public class HttpHandler implements Runnable {
 		}
 	}
 
-	public static void process(String sessionId, HttpReq request, HttpResponse resp) {
+	public void process(String sessionId, HttpReq request, HttpResponse resp) {
 		LogUtil.info("process : " + request.getPath());
 		RequestMapper mapper = RequestHandler.maps.get(request.getPath() == null ? "" : request.getPath());
 		if (mapper == null) {

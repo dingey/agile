@@ -117,6 +117,17 @@ public class ByteUtil {
 		return tmp;
 	}
 
+	public static byte[] getHeader(byte[] bytes) {
+		int off = 0;
+		for (int i = 0; i < bytes.length; i++) {
+			if ((i + 3) < bytes.length && bytes[i] == '\r' && bytes[i + 1] == '\n' && bytes[i + 2] == '\r'
+					&& bytes[i + 3] == '\n') {
+				off = i;
+			}
+		}
+		return Arrays.copyOfRange(bytes, 0, off);
+	}
+
 	public static void main(String[] args) {
 		byte[] bs = { '5', 'a', '\r', '\n', '\r', '\n', '6', '-', '-', 'a', '7', '6', '6', '\r', '\n', '\r', '\n' };
 		List<byte[]> list = splitByRNRN(bs);

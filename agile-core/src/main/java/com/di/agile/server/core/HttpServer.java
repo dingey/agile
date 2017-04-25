@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.di.agile.server.util.ByteUtil;
 import com.di.agile.server.util.LogUtil;
 
 public class HttpServer implements Runnable {
@@ -72,9 +73,9 @@ public class HttpServer implements Runnable {
 							LogUtil.error("读取socketChannel出错");
 						}
 						if (requestBytes != null && requestBytes.length > 0) {
-							LogUtil.info(new String(requestBytes));
+							LogUtil.info(new String(ByteUtil.getHeader(requestBytes)));
 							LogUtil.info("启动了子线程..");
-							new Thread(new HttpHandler(requestBytes, key)).start();
+							new HttpHandler(requestBytes, key).start();
 						}
 					} else if (key.isWritable()) {
 						LogUtil.info(new Date().toLocaleString() + " : 有流写出!");

@@ -16,7 +16,7 @@ public class Str {
 	}
 
 	public Str newLine() {
-		s.append(System.getProperty("line.separator", "\n"));
+		s.append("\r\n");
 		return this;
 	}
 
