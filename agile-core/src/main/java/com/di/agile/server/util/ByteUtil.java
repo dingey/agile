@@ -128,6 +128,37 @@ public class ByteUtil {
 		return Arrays.copyOfRange(bytes, 0, off);
 	}
 
+	public static byte[] getHeaderAndFooter(byte[] bytes) {
+		byte[] header = getHeader(bytes);
+		byte[] footer = null;
+		for (int i = bytes.length - 1; i > 2; i--) {
+			if (bytes[i - 1] == '\r' && bytes[i] == '\n') {
+				footer = Arrays.copyOfRange(bytes, i, bytes.length);
+				break;
+			}
+		}
+		return byteMerger(header, footer);
+	}
+
+	public static boolean isEndWithBoundary(byte[] bs, String boundary) {
+		String b0 = "--" + boundary + "--";
+		if (bs.length > b0.length()) {
+			for (int i = 0; i < bs.length - b0.length(); i++) {
+				boolean b = true;
+				for (int j = 0; j < b0.length(); j++) {
+					if (bs[i + j] != b0.getBytes()[j]) {
+						b = false;
+						break;
+					}
+				}
+				if (b) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static void main(String[] args) {
 		byte[] bs = { '5', 'a', '\r', '\n', '\r', '\n', '6', '-', '-', 'a', '7', '6', '6', '\r', '\n', '\r', '\n' };
 		List<byte[]> list = splitByRNRN(bs);
