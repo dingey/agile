@@ -23,11 +23,12 @@ public class HttpReq {
 	private Map<String, String> cookies;
 	private String acceptEncoding;
 	private String connection;
-	private String contentLength;
+	private Integer contentLength;
 	private String boundary;
 	private Map<String, Object[]> reqs;
 	private String sessionId;
 	private byte[] body;
+	private boolean end = true;
 
 	public HttpReq() {
 		super();
@@ -64,11 +65,10 @@ public class HttpReq {
 				this.acceptEncoding = s.split(":")[1];
 			} else if (s.indexOf("Connection") != -1) {
 				this.connection = s.split(":")[1];
-			} else if (s.indexOf("Cookie") != -1) {
-				setCookie(s);
-				if (s.indexOf("sessionId") != -1) {
-					setSessionId(s.substring(s.indexOf("sessionId=") + 10));
-				}
+			} else if (s.indexOf("Content-Length") != -1) {
+				setContentLength(Integer.valueOf(s.split(":")[1].trim()));
+			} else if (s.indexOf("Connection") != -1) {
+				this.connection = s.split(":")[1];
 			} else if (s.isEmpty() && this.method == HttpMethod.GET) {
 				return;
 			} else if (s.equals("\r\n") || s.equals("")) {
@@ -81,7 +81,11 @@ public class HttpReq {
 				reqs = UrlParamUtil.getParamByGet(new String(getBody()));
 			} else if (this.contentType == HttpContentType.MULTIPART) {
 				reqs = UrlParamUtil.getParamByMultipart(getBody(), this.boundary);
+				setEnd(getBody().length == getContentLength());
 			}
+		}
+		if (this.path == null) {
+			this.setBody(bytes);
 		}
 	}
 
@@ -94,6 +98,14 @@ public class HttpReq {
 		} else {
 			cookies.put(s.split(":")[1].split(";")[1].split("=")[0], s.split(":")[1].split(";")[1].split("=")[1]);
 		}
+	}
+
+	public boolean isEnd() {
+		return end;
+	}
+
+	public void setEnd(boolean end) {
+		this.end = end;
 	}
 
 	public byte[] getBody() {
@@ -208,11 +220,11 @@ public class HttpReq {
 		this.acceptEncoding = acceptEncoding;
 	}
 
-	public String getContentLength() {
+	public Integer getContentLength() {
 		return contentLength;
 	}
 
-	public void setContentLength(String contentLength) {
+	public void setContentLength(Integer contentLength) {
 		this.contentLength = contentLength;
 	}
 

@@ -10,9 +10,11 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.di.agile.core.server.bean.HttpReq;
 import com.di.agile.server.util.ByteUtil;
 import com.di.agile.server.util.LogUtil;
 
@@ -20,6 +22,7 @@ public class HttpServer implements Runnable {
 	int port = 8081;
 	private boolean interrupted = false;
 	private int capacity = 10 * 1024 * 1024;// 10MB
+	static HashMap<String, HttpReq> requests = new HashMap<>();
 
 	public HttpServer(boolean interrupted) {
 		this.interrupted = interrupted;
@@ -73,9 +76,16 @@ public class HttpServer implements Runnable {
 							LogUtil.error("读取socketChannel出错");
 						}
 						if (requestBytes != null && requestBytes.length > 0) {
-							LogUtil.info(new String(ByteUtil.getHeader(requestBytes)));
-							LogUtil.info("启动了子线程..");
-							new HttpHandler(requestBytes, key).start();
+							HttpReq req = new HttpReq(requestBytes);
+							if (req.getPath() == null) {
+								put(key, req);
+							} else if (req.isEnd()) {
+								LogUtil.info(new String(ByteUtil.getHeader(requestBytes)));
+								LogUtil.info("启动了子线程..");
+								new HttpHandler(req, key).start();
+							} else if (!req.isEnd()) {
+								put(key, req);
+							}
 						}
 					} else if (key.isWritable()) {
 						LogUtil.info(new Date().toLocaleString() + " : 有流写出!");
@@ -92,6 +102,28 @@ public class HttpServer implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void put(SelectionKey selectionKey, HttpReq req) {
+		SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+		try {
+			InetSocketAddress addr = (InetSocketAddress) socketChannel.getRemoteAddress();
+			String key = addr.getAddress().getHostAddress() + ":" + addr.getPort();
+			HttpReq r = requests.get(key);
+			if (r == null) {
+				requests.put(key, req);
+			} else {
+				r.setBody(ByteUtil.byteMerger(r.getBody(), req.getBody()));
+				if (r.getBody().length == r.getContentLength()) {
+					requests.remove(key);
+					new HttpHandler(r, selectionKey).start();
+				}else{
+					requests.put(key, r);
+				}
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -39,9 +39,9 @@ public class HttpHandler extends Thread {
 	private String sessionId;
 	private int capacity = 100 * 1024 * 1024;// 10MB
 
-	public HttpHandler(byte[] requestHeader, SelectionKey key) {
+	public HttpHandler(HttpReq req, SelectionKey key) {
 		this.key = key;
-		request = new HttpReq(requestHeader);
+		this.request = req;
 		response = new HttpResponse();
 		response.setDomain(request.getHost() == null ? "" : request.getHost().trim());
 		if (!SessionUtil.contains(request.getSessionId())) {
