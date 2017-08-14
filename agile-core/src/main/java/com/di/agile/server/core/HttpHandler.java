@@ -37,7 +37,6 @@ public class HttpHandler extends Thread {
 	private HttpReq request;
 	private HttpResponse response;
 	private String sessionId;
-	private int capacity = 100 * 1024 * 1024;// 10MB
 
 	public HttpHandler(HttpReq req, SelectionKey key) {
 		this.key = key;
@@ -59,21 +58,22 @@ public class HttpHandler extends Thread {
 
 	public void handler() {
 		// 从context中得到相应的参数
-		buffer = ByteBuffer.allocate(capacity);
 		selector = key.selector();
 		channel = (SocketChannel) key.channel();
 		process(sessionId, request, response);
 		LogUtil.info("path : " + request.getPath());
-		buffer = ByteBuffer.allocate(capacity);
 		LogUtil.info(response.writer());
+		byte[] responseByte;
 		if (response.getBodys() != null) {
-			buffer.put(response.writerFile());
+			responseByte = response.writerFile();
 		} else {
-			buffer.put(response.writer().getBytes());
+			responseByte = response.writer().getBytes();
 		}
+		buffer = ByteBuffer.allocate(responseByte.length);
+		buffer.put(responseByte);
 		// 从写模式，切换到读模式
 		buffer.flip();
-		if(!channel.isConnected()){
+		if (!channel.isConnected()) {
 			return;
 		}
 		try {
