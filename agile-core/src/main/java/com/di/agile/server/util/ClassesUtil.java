@@ -37,7 +37,7 @@ public class ClassesUtil {
 	/**
 	 * 从一个指定路径下查找所有的类
 	 * 
-	 * @param name
+	 * @param packagename 包路径
 	 */
 	@SuppressWarnings("rawtypes")
 	public static ArrayList<Class> getAllClass(String packagename) {
